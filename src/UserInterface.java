@@ -1,7 +1,6 @@
 import javax.swing.*;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
@@ -58,10 +57,15 @@ public class UserInterface extends Api {
 
     private void createHandler() {
         String username = JOptionPane.showInputDialog("Enter the username");
-        int age = Integer.parseInt(JOptionPane.showInputDialog("Enter the age"));
-        double balance = Double.parseDouble(JOptionPane.showInputDialog("Enter the balance"));
-
-        System.out.println(username);
+        if(username == null || username.isBlank()) return; //Check if the input is empty/user pressed Cancel
+        int age;
+        double balance;
+        try {
+            age = Integer.parseInt(JOptionPane.showInputDialog("Enter a new age"));
+            balance = Double.parseDouble(JOptionPane.showInputDialog("Enter a new balance"));
+        } catch (Exception e) {
+            return;
+        }
 
         try {
             createItem(username, age, balance);
@@ -84,10 +88,32 @@ public class UserInterface extends Api {
         }
     }
     private void updateHandler () {
-
+        try {
+            String queryUsername = JOptionPane.showInputDialog("Enter the username from the record you wish to update");
+            if(queryUsername == null || queryUsername.isBlank()) return; //Check if the input is empty/user pressed Cancel
+            String newUsername = JOptionPane.showInputDialog("Enter a new username");
+            if(newUsername == null || newUsername.isBlank()) return;
+            int newAge;
+            double newBalance;
+            try {
+                newAge = Integer.parseInt(JOptionPane.showInputDialog("Enter a new age"));
+                newBalance = Double.parseDouble(JOptionPane.showInputDialog("Enter a new balance"));
+            } catch (Exception e) {
+                return;
+            }
+            updateItem(queryUsername, newUsername, newAge, newBalance);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage() + "\n" + e.getCause());
+        }
     }
     private void deleteHandler () {
-
+        try {
+            String username = JOptionPane.showInputDialog("Enter the username from the record you wish to delete");
+            if(username == null || username.isBlank()) return; //Check if the input is empty/user pressed Cancel
+            deleteItem(username);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage() + "\n" + e.getCause());
+        }
     }
 
     class CustomTableModel extends AbstractTableModel {

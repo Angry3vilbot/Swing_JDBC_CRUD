@@ -65,14 +65,33 @@ public class Api extends JFrame {
             }
             j++;
         }
+        pstat.close();
+        connection.close();
         return result;
     }
 
-    void updateItem(String username, int age, double balance) {
-
+    void updateItem(String queryName,String username, int age, double balance) throws SQLException{
+        //Establish a connection
+        connection = DriverManager.getConnection(DATABASE_URL, "postgres", password);
+        //Create a prepared statement for updating data in the table
+        pstat = connection.prepareStatement("UPDATE \"user\" SET username=?, age=?, balance=? WHERE username=?");
+        pstat.setString(1, username);
+        pstat.setInt(2, age);
+        pstat.setDouble(3, balance);
+        pstat.setString(4, queryName);
+        //Update the table
+        pstat.executeUpdate();
     }
 
-    void deleteItem(String username, int age, double balance) {
-
+    void deleteItem(String username) throws SQLException{
+        //Establish a connection
+        connection = DriverManager.getConnection(DATABASE_URL, "postgres", password);
+        //Create a prepared statement for updating data in the table
+        pstat = connection.prepareStatement("DELETE FROM \"user\" WHERE username=?");
+        pstat.setString(1, username);
+        //Update the table
+        pstat.executeUpdate();
+        pstat.close();
+        connection.close();
     }
 }
